@@ -314,14 +314,9 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
         {
             if (nCode >= 0)
             {
-
-                var msg = (WM)wParam;
                 var hookInfo = Marshal.PtrToStructure<NativeMethods.KBDLLHOOKSTRUCT>(lParam);
 
                 var key = (VirtualKey)hookInfo.vkCode;
-
-
-
                 bool alt = User32Methods.GetKeyState(VirtualKey.MENU).IsPressed;
                 bool control = User32Methods.GetKeyState(VirtualKey.CONTROL).IsPressed;             
 
@@ -333,7 +328,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
 
                 if (!AllowKeyboardInput(alt, control, key))
                 {
-                    return (IntPtr)1; // Handled.
+                   return (IntPtr)1; // Handled.
                 }
             }
 
@@ -345,7 +340,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
         public static bool AllowKeyboardInput(bool alt, bool control, VirtualKey key)
         {
             // Disallow various special keys.
-            if (key <= VirtualKey.BACK || key == VirtualKey.NONAME ||
+            if (key < VirtualKey.BACK || key == VirtualKey.NONAME ||
                 key == VirtualKey.MENU || key == VirtualKey.PAUSE ||
                 key == VirtualKey.HELP)
             {
@@ -368,6 +363,8 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
             // Disallow specific key combinations. (These component keys would be OK on their own.)
             if ((alt && key == VirtualKey.TAB) ||
                 (alt && key == VirtualKey.SPACE) ||
+                (alt && key == VirtualKey.F4) ||
+                //(control && alt && key == VirtualKey.DELETE) ||
                 (control && key == VirtualKey.ESCAPE))
             {
                 return false;
