@@ -72,6 +72,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
         {
             while (User32Methods.GetMessage(out Message msg, IntPtr.Zero, 0, 0) != 0)
             {
+                
                 if (msg.Value == (uint)WM.CLOSE)
                 {
                     DetachKeyboardHook();
@@ -81,6 +82,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
                 {
                     User32Methods.PostMessage(NativeWindow.NativeInstance.Handle, (uint)WM.CLOSE, IntPtr.Zero, IntPtr.Zero);
                 }
+
                 if (ChromelyConfiguration.Instance.HostFrameless || ChromelyConfiguration.Instance.KioskMode)
                 {
                     CefRuntime.DoMessageLoopWork();
@@ -315,7 +317,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
             if (nCode >= 0)
             {
                 var hookInfo = Marshal.PtrToStructure<NativeMethods.KBDLLHOOKSTRUCT>(lParam);
-
+                
                 var key = (VirtualKey)hookInfo.vkCode;
                 bool alt = User32Methods.GetKeyState(VirtualKey.MENU).IsPressed;
                 bool control = User32Methods.GetKeyState(VirtualKey.CONTROL).IsPressed;             
@@ -341,7 +343,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
         {
             // Disallow various special keys.
             if (key < VirtualKey.BACK || key == VirtualKey.NONAME ||
-                key == VirtualKey.MENU || key == VirtualKey.PAUSE ||
+                key == VirtualKey.MENU || key == VirtualKey.LMENU || key == VirtualKey.RMENU || key == VirtualKey.PAUSE ||
                 key == VirtualKey.HELP)
             {
                 return false;
@@ -408,7 +410,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
         {
             var msg = (WM)umsg;
             switch (msg)
-            {
+            {               
                 case WM.HOTKEY:
                     {
                         if (wParam == (IntPtr)1)
@@ -417,15 +419,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
                             return IntPtr.Zero;
                         }
                         break;
-                    }
-                case WM.SYSKEYDOWN:
-                    {
-                        if (_hostConfig.KioskMode &&  (wParam == (IntPtr)VirtualKey.F4))
-                        {
-                            return IntPtr.Zero;
-                        }
-                        break;
-                    }
+                    }                
                 case WM.ACTIVATE:
                     {
                         if (_hostConfig.HostFrameless)
