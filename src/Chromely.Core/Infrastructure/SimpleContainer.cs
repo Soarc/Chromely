@@ -222,6 +222,17 @@ namespace Caliburn.Light
         }
 
         /// <summary>
+        /// Registers the class so that a new instance is created on each request using factory method.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="key"></param>
+        /// <param name="factory">factory method</param>
+        public void RegisterPerRequest(Type service, string key, Func<object> factory)
+        {
+            RegisterPerRequest(service, sc => factory(), key);
+        }
+
+        /// <summary>
         /// Registers the class so that a new instance is created on each request.
         /// </summary>
         /// <typeparam name="TService">The type of the service.</typeparam>
@@ -481,7 +492,7 @@ namespace Caliburn.Light
 
             return null;
         }
-
+        
         /// <summary>
         /// The container entry.
         /// </summary>

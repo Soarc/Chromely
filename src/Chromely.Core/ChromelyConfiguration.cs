@@ -897,6 +897,25 @@ namespace Chromely.Core
         }
 
         /// <summary>
+        /// Registers custom handler.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <param name="handlerFactory">Handler factory</param>
+        /// <returns>
+        /// The <see cref="ChromelyConfiguration"/> object.
+        /// </returns>
+        public virtual ChromelyConfiguration RegisterCustomHandler(CefHandlerKey key, Func<object> handlerFactory)
+        {
+            var service = CefCustomHandlerFakeTypes.GetHandlerType(key);
+            var keyStr = key.EnumToString();
+            IoC.Container.RegisterPerRequest(service, keyStr, handlerFactory);
+
+            return this;
+        }
+
+        /// <summary>
         /// Registers scheme handler.
         /// </summary>
         /// <param name="schemeName">

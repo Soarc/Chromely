@@ -90,6 +90,14 @@ namespace Chromely.Core
         /// <summary>
         /// Registers the class so that a new instance is created on each request.
         /// </summary>
+        /// <param name="service">The type of the service.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="factory">The factory method</param>
+        void RegisterPerRequest(Type service, string key, Func<object> factory);
+
+        /// <summary>
+        /// Registers the class so that a new instance is created on each request.
+        /// </summary>
         /// <typeparam name="TService">The type of the service.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="key">The key.</param>
