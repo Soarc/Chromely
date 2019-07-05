@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Chromely.Core;
 using Chromely.Core.Host;
 using Chromely.Core.Infrastructure;
@@ -83,7 +84,7 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
                     User32Methods.PostMessage(NativeWindow.NativeInstance.Handle, (uint)WM.CLOSE, IntPtr.Zero, IntPtr.Zero);
                 }
 
-                if (ChromelyConfiguration.Instance.HostFrameless || ChromelyConfiguration.Instance.KioskMode)
+                if (ChromelyConfiguration.Instance.HostFrameless)
                 {
                     CefRuntime.DoMessageLoopWork();
                 }
@@ -288,8 +289,17 @@ namespace Chromely.CefGlue.Winapi.BrowserWindow
                 User32Methods.SetWindowLongPtr(Handle, (int)WindowLongFlags.GWL_EXSTYLE, (IntPtr)styles.Item2);
 
 
-                User32Methods.SetWindowPos(Handle, (IntPtr)HwndZOrder.HWND_TOPMOST, 0, 0, fullscreenWidth, fullscreenHeight,
-                    WindowPositionFlags.SWP_NOZORDER | WindowPositionFlags.SWP_NOACTIVATE | WindowPositionFlags.SWP_FRAMECHANGED);
+                User32Methods.SetWindowPos(Handle, (IntPtr)HwndZOrder.HWND_TOP, 0, 0, fullscreenWidth, fullscreenHeight,
+                    WindowPositionFlags.SWP_NOACTIVATE | WindowPositionFlags.SWP_FRAMECHANGED);
+
+                // For some reason, if window is activated in topmost already, than vimeo videos are not rendered
+                // So we setting topmost after one second
+                Task.Run(async () =>
+                {
+                    await Task.Delay(1000);
+                    User32Methods.SetWindowPos(Handle, (IntPtr)HwndZOrder.HWND_TOPMOST, 0, 0, fullscreenWidth, fullscreenHeight,
+                        WindowPositionFlags.SWP_NOACTIVATE | WindowPositionFlags.SWP_FRAMECHANGED);
+                });
 
                 User32Methods.ShowWindow(Handle, ShowWindowCommands.SW_MAXIMIZE);
 

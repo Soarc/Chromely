@@ -371,7 +371,7 @@ namespace Chromely.CefGlue.BrowserWindow
                 ResourcesDirPath = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath)
             };
 
-            if (HostConfig.HostFrameless || HostConfig.KioskMode)
+            if (HostConfig.HostFrameless)
             {
                 if (HostConfig.HostApi == ChromelyHostApi.Gtk)
                 {
